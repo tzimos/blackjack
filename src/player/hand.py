@@ -22,3 +22,18 @@ class PlayerHand(BaseHand):
 
     def reset_balance(self):
         self.balance = 0
+
+    def player_has(self):
+        return "Player has: \r\n" + self.show_hand()
+
+    def calc_balance(self, is_blackjack=False, win=False):
+        if is_blackjack and not win:
+            raise ValueError("You cannot have blackjack and not winning")
+        if not any([is_blackjack, win]):
+            self.balance = 0
+        if win:
+            if is_blackjack:
+                self.balance *= 2.5
+            else:
+                self.balance *= 2
+        return self.balance

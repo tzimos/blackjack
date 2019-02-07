@@ -1,5 +1,7 @@
+PRESS_ENTER_TO_START_GAME = 'To start a game please press enter'
+
 WELCOME_MESSAGE = 'Welcome to the magnificent world of the CMD BlackJack!!!\n' \
-                  '\n\n\n\tTo start a game please write start'
+                  '\n\n\n\t' + PRESS_ENTER_TO_START_GAME
 
 GOODBYE_MESSAGE = 'Thank you for participating in this game.\n' \
                   'Come back soon. If you are a loyal player you can participate' \
@@ -10,3 +12,10 @@ NOT_ENOUGH_INITIAL_STAKE = 'Please deposit some money if ' \
 DEPOSIT_AMOUNT = 'Please enter an amount that you want to bet in this round: '
 
 NOT_A_POSITIVE_NUMBER = 'Please enter a positive number'
+
+BLACKJACK_MSG = 'You won with a BlackJack. Well done.\n Your balance is {}'
+
+HIT_OR_STAND = 'Please make a choice:\n\t1)Hit\n\t2)Stand\n'
+
+ASK_RESET_GAME = 'Do you want to play again? Please press enter'
+AND_THE_WINNER_IS = 'And the winner is {}'
