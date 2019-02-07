@@ -25,7 +25,6 @@ class Game:
 
     def reset_game(self):
         self.dealer.reset_hand()
-
         self.player.reset_hand()
         self.dealer.reset_hand()
 
@@ -42,19 +41,31 @@ class Game:
         return self.dealer.lost_game()
 
     def is_finished(self):
-        return self.player.lost_game() or self.dealer.lost_game()
+        return self.player.lost_game() \
+               or self.dealer.lost_game() \
+               or not self.dealer_must_continue()
 
     def winner(self):
-        if self.player.lost_game():
-            winner = 'dealer'
-        elif self.dealer.lost_game():
-            winner = 'player'
+        if self.player.best_evaluation() <= self.dealer.best_evaluation():
+            return 'dealer'
         else:
-            player_hand = max(self.player.evaluate_hand())
-            dealer_hand = max(self.dealer.evaluate_hand())
-            if player_hand > dealer_hand:
-                winner = 'player'
+            if self.is_blackjack:
+                self.player.balance *= 2.5
             else:
-                winner = 'dealer'
+                self.player.balance *= 2
+            return 'player'
 
-        return winner
+
+    def dealer_must_continue(self):
+        hand = self.dealer.evaluate_hand()
+        minimun = min(hand)
+        maximum = max(hand)
+        if self.dealer.best_evaluation() < self.player.best_evaluation():
+            return True
+        elif self.dealer.best_evaluation() >= self.player.best_evaluation():
+            return False
+
+        if (minimun >= 17 or maximum >= 17):
+            return False
+
+        return True

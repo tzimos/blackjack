@@ -22,3 +22,4 @@ COMPLETE_DECK_FLAT = list(itertools.chain.from_iterable(COMPLETE_DECK))
 
 CARD_DECK_SYMBOLS_ = ['♣','♦','♥','♠']
 CARD_DECK_SYMBOLS = dict(zip(DECK_SUITS, CARD_DECK_SYMBOLS_))
+SHUFFLING_SLEEP = 0.001

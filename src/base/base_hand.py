@@ -32,6 +32,11 @@ class BaseHand:
             return points, False
         has_ace = False
         for card in self.hand:
+            if len(card) == 3:
+                cp = card[:]
+                card = [None] * 2
+                card[0] = cp[:2]
+                card[1] = cp[-1]
             if card[0] in DECK_SPECIAL:
                 points.append(10)
             elif card[0] in DECK_ACE:
@@ -139,4 +144,25 @@ class BaseHand:
         return first_l + second_l + third_l + forth_l + fifth_l + sixth_l + last_l
 
     def show_hand(self):
-        return self._append_cards(self.hand)
+        return self._append_cards(self.hand) + self.evaluate_hand_for_gui()
+
+    def evaluate_hand_for_gui(self):
+        hand = self.evaluate_hand()
+        minimum = min(hand)
+        maximum = max(hand)
+        if minimum == maximum or maximum > 21:
+            return f'Sum of cards {minimum}'
+        return f'Sum of cards minimum:{minimum}, maximum:{maximum}'
+
+    def best_evaluation(self):
+        hand = self.evaluate_hand()
+        minimum = min(hand)
+        maximum = max(hand)
+        if minimum > 21:
+            return 0
+        if minimum == maximum:
+            return minimum
+        if maximum > 21:
+            return minimum
+        else:
+            return maximum

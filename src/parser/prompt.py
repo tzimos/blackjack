@@ -5,7 +5,7 @@ from functools import wraps
 
 from src.game import Game
 from src.parser.utils.is_positive_number import is_positive_number
-from src.settings.constants import OS
+from src.settings.constants import OS, SHUFFLING_SLEEP
 from src.settings import messages as msg
 
 
@@ -34,6 +34,8 @@ class Prompt(Cmd):
     def do_exit(self, inp=None):
         self.do_clear()
         print(msg.GOODBYE_MESSAGE)
+        quit()
+
         return True
 
     def do_welcome(self, s=None):
@@ -46,7 +48,7 @@ class Prompt(Cmd):
             return self.do_start()
         else:
             self.do_clear()
-            print(msg.PRESS_ENTER_TO_START_GAME)
+            self.do_after_welcome()
 
     def do_shuffling_deck(self, un=None):
         """
@@ -64,7 +66,7 @@ class Prompt(Cmd):
             middle_text_list = list(middle_text)
             middle_text_list[:idx] = '=' * (idx + 1)
             new_middle_text = ''.join(middle_text_list)
-            time.sleep(.1)
+            time.sleep(SHUFFLING_SLEEP)
             end_text = f'] {percentage}%'
             final = start_text + new_middle_text + end_text
             self.do_clear()
@@ -82,17 +84,29 @@ class Prompt(Cmd):
             return self.do_start()
         return int(data)
 
-    def do_ask_reset(self,a=None):
+    def do_ask_reset(self, a=None):
         data = input(msg.ASK_RESET_GAME)
         if data == '':
             self.do_reset_game()
         else:
             self.do_clear()
-            print(msg.PRESS_ENTER_TO_START_GAME)
+            self.do_after_welcome()
 
-    def do_show_winner(self,a=None):
+    def do_show_winner(self, a=None):
         winner = self.game.winner()
         print(msg.AND_THE_WINNER_IS.format(winner))
+        if winner is 'player':
+            print('\n' + msg.AMOUNT_WON.format(self.player.balance))
+        print('\n\n\n')
+        self.do_play_again()
+
+    def do_play_again(self):
+        data = input(msg.ASK_TO_PLAY_AGAIN)
+        if data == 'q':
+            self.do_exit()
+        if data == '':
+            self.do_clear()
+            self.do_reset_game()
 
     @check_balance
     def do_hit(self, player=None):
@@ -113,7 +127,7 @@ class Prompt(Cmd):
 
     def do_dealer_thinks_to_continue(self):
         time.sleep(1)
-        go_on = self.dealer.must_continue()
+        go_on = self.game.dealer_must_continue()
         if go_on:
             self.do_hit(False)
         else:
@@ -123,7 +137,6 @@ class Prompt(Cmd):
     def do_stand(self, player=None):
         self.do_dealer_thinks_to_continue()
 
-
     def do_ask_hit_or_stand(self, player=None):
         response = self._do_ask_hit_or_stand()
         response = self.validate_data(response)
@@ -131,6 +144,8 @@ class Prompt(Cmd):
             self.do_hit(True)
         elif response == 2:
             self.do_stand(player)
+        else:
+            self.do_ask_hit_or_stand()
 
     def _do_ask_hit_or_stand(self, a=None):
         return input(msg.HIT_OR_STAND)
@@ -151,7 +166,7 @@ class Prompt(Cmd):
         self.dealer = self.game.dealer
         self.plays_next = 'player'
 
-        self.game.player.balance += amount
+        self.player.balance += amount
 
         # Shuffling deck
         self.do_shuffling_deck()
@@ -162,12 +177,13 @@ class Prompt(Cmd):
 
         if is_blackjack:
             balance = self.game.player.calc_balance()
-
+            self.do_blackjack_msg()
 
         self.do_ask_hit_or_stand()
 
+    def do_blackjack_msg(self):
+        print(msg.BLACKJACK_MSG.format(self.player.balance))
+        self.do_ask_reset()
 
     def do_start(self, a=None):
         self.do_reset_game()
-
-

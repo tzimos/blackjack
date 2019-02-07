@@ -19,3 +19,8 @@ HIT_OR_STAND = 'Please make a choice:\n\t1)Hit\n\t2)Stand\n'
 
 ASK_RESET_GAME = 'Do you want to play again? Please press enter'
 AND_THE_WINNER_IS = 'And the winner is {}'
+ASK_TO_PLAY_AGAIN = 'Do you want to play again?\n' \
+                    'If yes please press enter.\n' \
+                    'If you want to exit please press q button.\n'
+
+AMOUNT_WON = 'You have won {}\n'
